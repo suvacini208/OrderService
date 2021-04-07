@@ -16,6 +16,8 @@ public class Order {
 	
 	private String status;
 	
+	private String failureReason;
+	
 	@NotEmpty(message = "Item list cannot be empty")
 	private List<Item> item;
 	
@@ -55,6 +57,14 @@ public class Order {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getFailureReason() {
+		return failureReason;
+	}
+
+	public void setFailureReason(String failureReason) {
+		this.failureReason = failureReason;
 	}
 
 }

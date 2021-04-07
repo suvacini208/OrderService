@@ -1,5 +1,7 @@
 package com.suva.order.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.suva.order.domain.DbSequence;
 import com.suva.order.domain.Inventory;
-import com.suva.order.domain.Item;
 import com.suva.order.domain.Order;
 import com.suva.order.repository.DbSequenceRepository;
 import com.suva.order.repository.OrderRepository;
@@ -66,10 +67,20 @@ public class OrderService {
 		DbSequence dbSeq = dbSeqRepo.findById(Order.DB_SEQ).orElse(new DbSequence());
 		long seqId = dbSeq.getSeq() + 1;
 		dbSeq.setSeq(seqId);
-		dbSeq.setId(Item.DB_SEQ);
+		dbSeq.setId(Order.DB_SEQ);
 		dbSeqRepo.save(dbSeq);
 
 		return seqId;
+	}
+
+	public void saveOrder(Order order) {
+		Optional<Order> orderDS = orderRepository.findById(order.getId());
+		if(orderDS.isPresent()) {
+			Order orderVal = orderDS.get();
+			orderVal.setFailureReason(order.getFailureReason());
+			orderVal.setStatus(order.getStatus());
+			orderRepository.save(orderVal);
+		}		
 	}
 
 }
